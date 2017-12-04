@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <artifactId>examples</artifactId>
-        <groupId>org.jboss.seam</groupId>
-        <version>2.3.1.Final</version>
-    </parent>
-    
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.seam.examples</groupId>
     <artifactId>dvdstore</artifactId>
+    <version>2.3.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Dvdstore Example (EE6)</name>
   
@@ -16,15 +11,29 @@
         <module>dvdstore-ejb</module>
         <module>dvdstore-web</module>
         <module>dvdstore-ear</module>
-        <module>dvdstore-tests</module>
     </modules>
     
     <properties>
         <example.name>dvdstore</example.name>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.6</maven.compiler.source>
+
+        <!-- To use jacoco, set jacoco.agent system property to something like 
+            -javaagent:/path/to/jacocoagent.jar=append=true,destfile=/path/to/output/jacoco.exec -->
+        <jacoco.agent />
+        
+        <version.clean.plugin>2.5</version.clean.plugin>
+        <version.surefire.plugin>2.10</version.surefire.plugin>
+        <version.compiler.plugin>2.3.1</version.compiler.plugin>
+        <version.ear.plugin>2.6</version.ear.plugin>
+        <version.war.plugin>2.1.1</version.war.plugin>
+        <version.commons.logging>1.1.1</version.commons.logging>
     </properties>
     
     <dependencyManagement>
         <dependencies>
+            <!-- Modules -->
             <dependency>
                 <groupId>org.jboss.seam.examples.dvdstore</groupId>
                 <artifactId>dvdstore-ejb</artifactId>
@@ -42,7 +51,71 @@
                 <artifactId>dvdstore-ear</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <!-- BOMs -->
+            <dependency>
+                <groupId>org.jboss.seam</groupId>
+                <artifactId>bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            
+            <!-- Common provided dependencies -->
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${version.commons.logging}</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Manage plugin versions for build stability -->
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${version.surefire.plugin}</version>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <org.apache.maven.user-settings>${maven.user.settings}</org.apache.maven.user-settings>
+                            <maven.profiles>${maven.profiles}</maven.profiles>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${version.dependency.plugin}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${version.compiler.plugin}</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${version.clean.plugin}</version>
+                <!-- Delete lucene indexes on clean -->
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>.</directory>
+                            <includes>
+                              <include>**/dvdindexes/</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     
 </project>

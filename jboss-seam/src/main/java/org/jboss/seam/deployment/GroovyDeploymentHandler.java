@@ -111,7 +111,7 @@ public class GroovyDeploymentHandler extends AbstractDeploymentHandler
             log.debug("could not load groovy class: " + classname, cnfe);
 
          }
-         catch (NoClassDefFoundError ncdfe)
+         catch (LinkageError ncdfe)
          {
             log.debug("could not load groovy class (missing dependency): " + classname, ncdfe);
 

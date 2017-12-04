@@ -40,7 +40,7 @@
             <para> This listener is responsible for bootstrapping Seam, and for destroying session and application
                 contexts. </para>
 
-            <para> Some JSF implementations have a broken implementation of server-side state saving that interferes
+            <!-- para> Some JSF implementations have a broken implementation of server-side state saving that interferes
                 with Seam's conversation propagation. If you have problems with conversation propagation during form
                 submissions, try switching to client-side state saving. You'll need this in <literal>web.xml</literal>: </para>
 
@@ -60,7 +60,7 @@
                     <env-entry-value>INSERT_YOUR_PASSWORD</env-entry-value>
                 </env-entry>]]></programlisting>
                 </para>
-            </warning>
+            </warning-->
             <para>
                 There is a minor gray area in the JSF specification regarding the mutability of view state values. Since
                 Seam uses the JSF view state to back its PAGE scope this can become an issue in some cases. If you're

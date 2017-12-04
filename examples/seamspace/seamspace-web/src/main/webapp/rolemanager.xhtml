@@ -24,7 +24,7 @@
 
   	    <h2>Role Manager</h2>  
   	    
-        <s:button id="newRole" action="#{roleAction.createRole}" styleClass="newrole" rendered="#{s:hasPermission('seam.account', 'create', null)}"/>
+        <s:button id="newRole" action="#{roleAction.createRole}" styleClass="newrole" rendered="#{s:hasPermission('seam.account', 'create', null)}" value="New Role" />
   	    
         <h:dataTable 
             id="threads"

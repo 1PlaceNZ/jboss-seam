@@ -16,21 +16,13 @@
    <properties>
       <!-- filtering property for components.xml -->
       <jndiPattern>java:app/icefaces-ejb/#{ejbName}</jndiPattern>
+      <version.org.icefaces>3.2.0</version.org.icefaces>
    </properties>
-
-   <repositories>
-      <repository>
-         <id>iceFacesStable</id>
-         <name>Ice Faces Stable Repository</name>
-         <url>http://anonsvn.icesoft.org/repo/maven2/releases/</url>
-      </repository>
-   </repositories>
 
    <dependencies>
       <dependency>
          <groupId>org.jboss.seam.examples.icefaces</groupId>
          <artifactId>icefaces-ejb</artifactId>
-         <version>${project.version}</version>
          <type>ejb</type>
          <scope>provided</scope>
       </dependency>
@@ -71,7 +63,7 @@
       <dependency>
          <groupId>org.icefaces</groupId>
          <artifactId>icefaces-compat</artifactId>
-         <version>3.1.0</version>
+         <version>${version.org.icefaces}</version>
          <exclusions>
             <exclusion>
                <artifactId>javax.faces</artifactId>
@@ -86,6 +78,7 @@
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
+            <version>${version.war.plugin}</version>
             <configuration>
                <nonFilteredFileExtensions>
                   <!-- default value contains jpg,jpeg,gif,bmp,png -->

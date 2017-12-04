@@ -1,0 +1,94 @@
+<h1>Seam Example EE6 Applications</h1>
+
+<p>This directory contains the Seam example applications, which have all been
+tested on the latest release of JBoss AS 7.1.1. Consult the <code>README.md</code> file in each of 
+the examples to see details.</p>
+
+<p>The name of each example, refered to later as <code>${example.name}</code>, is equivalent to the name of the folder.</p>
+
+<hr />
+
+<h2>Deploying and Testing an Example Application</h2>
+
+<p>These are general instructions for deploying Seam examples. Take a look at the 
+<code>README.md</code> file in the example to see if there are any specific instructions.</p>
+
+<h3>How to Build and Deploy an Example on JBoss AS</h3>
+
+<ol>
+<li><p>Download and unzip JBoss AS 7.1.1 from:</p>
+
+<pre><code>http://jboss.org/jbossas/downloads
+</code></pre></li>
+<li><p>Make sure you have an up to date version of Seam: </p>
+
+<pre><code>http://seamframework.org/Download
+</code></pre></li>
+<li><p>Build the example by running the following command from the Seam <code>examples/${example.name}</code> directory:</p>
+
+<pre><code>mvn clean install
+</code></pre>
+
+<p><em>NOTE: There is an option to create an "exploded" archive. For this purpose, use <code>-Pexploded</code> maven profile.</em></p></li>
+<li><p>Deploy the example by setting the <code>JBOSS_HOME</code> property and running the 
+following command from the Seam "examples/${example.name}/{example.name}-ear" directory:</p>
+
+<pre><code>mvn jboss-as:deploy
+</code></pre>
+
+<p>To undeploy the example, run:</p>
+
+<pre><code>mvn jboss-as:undeploy
+</code></pre></li>
+<li><p>Point your web browser to:</p>
+
+<pre><code>http://localhost:8080/seam-${example.name}
+</code></pre>
+
+<p>The context path is set to the final name of the EAR archive.</p>
+
+<p>However, WAR deployments use a different naming convention for the context
+path. If you deploy a WAR example, point your web browser to:</p>
+
+<pre><code>http://localhost:8080/${example.name}-web
+</code></pre>
+
+<p>The WAR examples are:
+spring, jpa, hibernate, groovybooking.</p></li>
+</ol>
+
+<p><em>NOTE: The examples use the H2 database embedded in JBoss AS</em></p>
+
+<h3>Running The Integration Tests</h3>
+
+<p>Integration tests can be executed during a build of the application using:</p>
+
+<pre><code>mvn clean install -Darquillian=jbossas-{managed,remote}-7
+</code></pre>
+
+<h3>Running integration test(s) in Eclipse</h3>
+
+<p>Detailed guide is at <code>http://docs.jboss.org/arquillian/reference/1.0.0.Alpha1/en-US/html_single/#d0e552</code></p>
+
+<h3>Debugging of integration test(s) in Eclipse</h3>
+
+<p><code>http://docs.jboss.org/arquillian/reference/1.0.0.Alpha1/en-US/html_single/#d0e974</code></p>
+
+<h2>Running functional tests on an example</h2>
+
+<p>The following steps describe executing of functional tests in general. Some examples are not covered with functional tests and thus don't contain the <code>${example.name}-ftest</code> folder.</p>
+
+<ul>
+<li>Start JBoss AS 7</li>
+<li>Set <code>JBOSS_HOME</code> environment property, respectively</li>
+</ul>
+
+<p>To run a functional test:</p>
+
+<pre><code>mvn clean test -f ${example.name}/${example.name}-ftest/pom.xml
+</code></pre>
+
+<p>To run all functional tests:</p>
+
+<pre><code>mvn clean test -Dftest
+</code></pre>

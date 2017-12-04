@@ -126,7 +126,7 @@ public abstract class DeploymentStrategy
       {
          log.trace("Unable to use " + className + " as scanner (class not found)", e);
       }
-      catch (NoClassDefFoundError e) 
+      catch (LinkageError e) 
       {
          log.trace("Unable to use " + className + " as scanner (dependency not found)", e);
       }
@@ -190,7 +190,7 @@ public abstract class DeploymentStrategy
       {
          log.trace("Unable to use " + className + " as a deployment handler (class not found)", e);
       }
-      catch (NoClassDefFoundError e) 
+      catch (LinkageError e) 
       {
          log.trace("Unable to use " + className + " as a deployment handler (dependency not found)", e);
       }

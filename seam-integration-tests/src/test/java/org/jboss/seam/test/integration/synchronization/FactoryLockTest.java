@@ -139,8 +139,6 @@ public class FactoryLockTest extends JUnitSeamTest
    
    // Test the behavior of two components using factories of each other.
    @Test
-   // Skip the test, as it causes deadlock.
-   //@Ignore
    public void interleavingFactories()
          throws Exception 
    {

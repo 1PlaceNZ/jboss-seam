@@ -27,6 +27,14 @@
 			<h:commandButton id="view_output" value="view output"
 				action="#{ConversationAction.viewOutput()}" />
 		</div>
+
+		<div>
+			<h:commandButton id="view_output_ajax" value="view output by AJAX"
+				action="#{ConversationAction.viewOutput()}">
+				<f:ajax />
+			</h:commandButton>
+		</div>
+
 		<div>
 			<h:commandButton id="redirect_output" value="redirect output"
 				action="#{ConversationAction.redirectOutput()}" />
@@ -35,6 +43,13 @@
 			<h:commandButton id="pages_render" value="pages render"
 				action="#{ConversationAction.pagesRender}" />
 		</div>
+        <div>
+			<h:commandButton id="pages_render_ajax" value="pages render ajax"
+				action="#{ConversationAction.pagesRender}" >
+                <f:ajax />
+            </h:commandButton>
+		</div>
+
 		<div>
 			<h:commandButton id="pages_redirect" value="pages redirect"
 				action="#{ConversationAction.pagesRedirect}" />

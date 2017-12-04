@@ -141,11 +141,11 @@ public class JFreeData {
         Paint gp1 = new Color(0, 0, 0, 0);
         GradientPaint gp2 = new GradientPaint(0.0f, 0.0f, Color.red, 0.0f, 0.0f, new Color(64, 0, 0));
         //renderer.setSeriesPaint(0, gp0);
-	renderer.setSeriesPaint(0, Color.green);
+        renderer.setSeriesPaint(0, Color.green);
         renderer.setSeriesPaint(1, gp1);
         //renderer.setSeriesPaint(2, gp2);
-	renderer.setSeriesPaint(2, Color.red);
-        
+        renderer.setSeriesPaint(2, Color.red);
+	
         return chart;        
     }
 }

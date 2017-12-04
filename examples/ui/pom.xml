@@ -1,31 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <artifactId>examples</artifactId>
-        <groupId>org.jboss.seam</groupId>
-        <version>2.3.1.Final</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-    
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.seam.examples</groupId>
     <artifactId>ui</artifactId>
+    <version>2.3.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>UI Example (EE6)</name>
   
+    <properties>
+        <example.name>ui</example.name>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.6</maven.compiler.source>
+
+        <version.commons.logging>1.1.1</version.commons.logging>
+
+        <!-- Plugin versions -->
+        <version.dependency.plugin>2.5.1</version.dependency.plugin>
+        <version.surefire.plugin>2.10</version.surefire.plugin>
+        <version.resources.plugin>2.6</version.resources.plugin>
+        <version.compiler.plugin>2.3.1</version.compiler.plugin>
+        <version.ear.plugin>2.6</version.ear.plugin>
+        <version.war.plugin>2.1.1</version.war.plugin>
+        <version.ejb.plugin>2.3</version.ejb.plugin>
+        <version.jboss.maven.plugin>7.4.Final</version.jboss.maven.plugin>
+    </properties>
+
     <modules>
         <module>ui-ejb</module>
         <module>ui-web</module>
         <module>ui-ear</module>
-        <module>ui-tests</module>
+        
     </modules>
-
-    <properties>
-        <example.name>ui</example.name>
-    </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Modules -->
             <dependency>
                 <groupId>org.jboss.seam.examples.ui</groupId>
                 <artifactId>ui-ejb</artifactId>
@@ -43,7 +53,81 @@
                 <artifactId>ui-ear</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <!-- BOMs -->             
+            <dependency>                 
+                <groupId>org.jboss.seam</groupId>                 
+                <artifactId>bom</artifactId>                 
+                <version>${project.version}</version>                 
+                <type>pom</type>                 
+                <scope>import</scope>             
+            </dependency> 
+
+            <!-- Common provided dependencies -->
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${version.commons.logging}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- TestNG is not necessary -->
+            <dependency>
+                <groupId>org.jboss.seam</groupId>
+                <artifactId>jboss-seam</artifactId>
+                <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.testng</groupId>
+                        <artifactId>testng</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+    
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-ejb-plugin</artifactId>
+                    <version>${version.ejb.plugin}</version>
+                    <configuration>
+                        <ejbVersion>3.0</ejbVersion>
+                    </configuration>
+                </plugin>
+                <!-- Manage plugin versions for build stability -->
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${version.surefire.plugin}</version>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <org.apache.maven.user-settings>${maven.user.settings}</org.apache.maven.user-settings>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${version.dependency.plugin}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${version.resources.plugin}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${version.compiler.plugin}</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
     
 </project>

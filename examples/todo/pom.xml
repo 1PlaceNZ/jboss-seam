@@ -3,29 +3,41 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.seam.examples</groupId>
     <artifactId>todo</artifactId>
-    
-    <parent>
-        <groupId>org.jboss.seam</groupId>
-        <artifactId>examples</artifactId>
-        <version>2.3.1.Final</version>
-    </parent>
-    
+    <version>2.3.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Todo Example</name>
     
     <properties>
         <example.name>todo</example.name>
+
+        <!-- To use jacoco, set jacoco.agent system property to something like 
+                            -javaagent:/path/to/jacocoagent.jar=append=true,destfile=/path/to/output/jacoco.exec -->
+        <jacoco.agent />
+
+        <!-- To use custom Maven settings and profiles, uncomment and customize 
+                                      the following properties. This is necessary for the ShrinkWrap resolver to 
+            function properly. -->
+        <!--<maven.user.settings>/path/to/custom/settings.xml</maven.user.settings> -->
+        <!--<maven.profiles>custom,profile</maven.profiles> -->
+      
+        <version.build-helper.plugin>1.7</version.build-helper.plugin> 
+        <version.surefire.plugin>2.10</version.surefire.plugin> 
+        <version.ear.plugin>2.6</version.ear.plugin>
+        <version.war.plugin>2.1.1</version.war.plugin>
+        <version.ejb-plugin>2.3</version.ejb-plugin>
+        <version.jboss.maven.plugin>7.4.Final</version.jboss.maven.plugin>
     </properties>
     
     <modules>
         <module>todo-ejb</module>
         <module>todo-web</module>
         <module>todo-ear</module>
-        <module>todo-tests</module>
+        
     </modules>
     
     <dependencyManagement>
         <dependencies>
+            <!-- Modules -->
             <dependency>
                 <groupId>org.jboss.seam.examples.todo</groupId>
                 <artifactId>todo-ejb</artifactId>
@@ -43,6 +55,58 @@
                 <artifactId>todo-ear</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <!-- BOMs -->             
+            <dependency>                 
+                <groupId>org.jboss.seam</groupId>                 
+                <artifactId>bom</artifactId>                 
+                <version>${project.version}</version>                 
+                <type>pom</type>                 
+                <scope>import</scope>             
+            </dependency> 
+
+            <dependency>
+                <groupId>org.jboss.seam</groupId>
+                <artifactId>jboss-seam</artifactId>
+                <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.testng</groupId>
+                        <artifactId>testng</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+    
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${version.surefire.plugin}</version>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <org.apache.maven.user-settings>${maven.user.settings}</org.apache.maven.user-settings>
+                            <maven.profiles>${maven.profiles}</maven.profiles>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${version.build-helper.plugin}</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-ejb-plugin</artifactId>
+                    <version>${version.ejb-plugin}</version>
+                    <configuration>
+                        <ejbVersion>3.0</ejbVersion>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

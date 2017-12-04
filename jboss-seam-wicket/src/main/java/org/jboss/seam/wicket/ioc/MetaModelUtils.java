@@ -4,9 +4,8 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
-
-import org.jboss.seam.util.ProxyFactory;
 
 /**
  * Utilitilies relating to a MetaModel

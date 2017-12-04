@@ -31,26 +31,35 @@ public class UIField extends FormComponent
       AcroFields fields = (AcroFields) Contexts.getEventContext().get(FIELDS_KEY);
       String theName = getName();
       Object theValue = getValue();
-      if (theValue == null) {
-          return;
+      if (theValue == null)
+      {
+         return;
       }
       Boolean readOnly = getReadOnly();
       try
       {
          log.debug("Setting field '#0' to value '#1'", theName, theValue);
          boolean success = false;
-         if (theValue instanceof String) {
-             success = fields.setField(theName, (String) theValue);
-         } else if (theValue instanceof String[]){
-	     String[] stringValue = (String[])theValue;
-	     if (stringValue.length>0) {
-                 success = fields.setField(theName, stringValue[0]);
-	     } else {
-		 success = true;
-	     }
-         } else {
-             String message = Interpolator.instance().interpolate("Field #0 expected String or String[] but got #0", getName(), theValue.getClass().getName());
-             throw new IllegalArgumentException(message);
+         if (theValue instanceof String)
+         {
+            success = fields.setField(theName, (String) theValue);
+         }
+         else if (theValue instanceof String[])
+         {
+            String[] stringValue = (String[]) theValue;
+            if (stringValue.length > 0)
+            {
+               success = fields.setListSelection(theName, stringValue);
+            }
+            else
+            {
+               success = true;
+            }
+         }
+         else
+         {
+            String message = Interpolator.instance().interpolate("Field #0 expected String or String[] but got #0", getName(), theValue.getClass().getName());
+            throw new IllegalArgumentException(message);
          }
          if (!success)
          {
@@ -129,6 +138,5 @@ public class UIField extends FormComponent
    {
       this.readOnly = readOnly;
    }
-   
 
 }

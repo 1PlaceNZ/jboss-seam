@@ -1,4 +1,5 @@
-<components xmlns:pay="http://jboss.org/schema/seam/examples/seampay"
+<components xmlns="http://jboss.org/schema/seam/components"
+			xmlns:pay="http://jboss.org/schema/seam/examples/seampay"
             xmlns:core="http://jboss.org/schema/seam/core"
             xmlns:persistence="http://jboss.org/schema/seam/persistence"
             xmlns:framework="http://jboss.org/schema/seam/framework"
@@ -8,7 +9,8 @@
                 "http://jboss.org/schema/seam/core http://jboss.org/schema/seam/core-2.3.xsd
                  http://jboss.org/schema/seam/persistence http://jboss.org/schema/seam/persistence-2.3.xsd
                  http://jboss.org/schema/seam/async http://jboss.org/schema/seam/async-2.3.xsd
-                 http://jboss.org/schema/seam/framework http://jboss.org/schema/seam/framework-2.3.xsd" >
+                 http://jboss.org/schema/seam/framework http://jboss.org/schema/seam/framework-2.3.xsd
+                 http://jboss.org/schema/seam/components http://jboss.org/schema/seam/components-2.3.xsd" >
 
     <pay:payment-home 
                        new-instance="#{newPayment}" 

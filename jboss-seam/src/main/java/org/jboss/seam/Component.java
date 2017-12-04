@@ -53,6 +53,7 @@ import java.util.TreeSet;
 
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
 
 import javax.naming.NamingException;
@@ -91,10 +92,10 @@ import org.jboss.seam.contexts.Context;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.core.Events;
 import org.jboss.seam.core.Expressions;
-import org.jboss.seam.core.Init;
-import org.jboss.seam.core.Mutable;
 import org.jboss.seam.core.Expressions.MethodExpression;
 import org.jboss.seam.core.Expressions.ValueExpression;
+import org.jboss.seam.core.Init;
+import org.jboss.seam.core.Mutable;
 import org.jboss.seam.databinding.DataBinder;
 import org.jboss.seam.databinding.DataSelector;
 import org.jboss.seam.ejb.SeamInterceptor;
@@ -105,12 +106,11 @@ import org.jboss.seam.intercept.Proxy;
 import org.jboss.seam.log.LogProvider;
 import org.jboss.seam.log.Logging;
 import org.jboss.seam.util.Conversions;
+import org.jboss.seam.util.Conversions.PropertyValue;
 import org.jboss.seam.util.Naming;
-import org.jboss.seam.util.ProxyFactory;
 import org.jboss.seam.util.Reflections;
 import org.jboss.seam.util.SortItem;
 import org.jboss.seam.util.Sorter;
-import org.jboss.seam.util.Conversions.PropertyValue;
 import org.jboss.seam.web.Parameters;
 
 /**
@@ -970,7 +970,7 @@ public class Component extends Model
       {
          addInterceptor(new Interceptor(interceptorInstance, this));
       }
-      catch (NoClassDefFoundError e)
+      catch (LinkageError e)
       {
          log.debug("Unable to load interceptor " + interceptorInstance.getClass(), e);
       }
@@ -1091,7 +1091,7 @@ public class Component extends Model
             interceptorInstance = clazz.newInstance();
             
          }
-         catch (NoClassDefFoundError e)
+         catch (LinkageError e)
          {
             log.debug("Unable to load interceptor " + interceptorName, e);
          }

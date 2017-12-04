@@ -1,0 +1,71 @@
+<h1>Seam Spring Example</h1>
+
+<p>This example shows Seam/Spring integration. This application runs on AS as
+a WAR file.</p>
+
+<h2>Running the example</h2>
+
+<p>To deploy the example to a running JBoss AS instance, follow these steps:</p>
+
+<ol>
+<li><p>In the example root directory run:</p>
+
+<pre><code>mvn clean install
+</code></pre></li>
+<li><p>Set JBOSS_HOME environment property.</p></li>
+<li><p>In the spring-web directory run:</p>
+
+<pre><code>mvn jboss-as:deploy
+</code></pre></li>
+<li><p>Open this URL in a web browser: http://localhost:8080/spring-web</p></li>
+</ol>
+
+<h2>Testing the example</h2>
+
+<p>This example is covered by functional tests. All tests use the following technologies:</p>
+
+<ul>
+<li><strong>Arquillian</strong> -  as the framework for EE testing, for managing of container lifecycle and deployment of test archive,</li>
+<li><strong>ShrinkWrap</strong> - to create the test archive (WAR).</li>
+</ul>
+
+<h3>Functional tests</h3>
+
+<p>Functional tests are located in a separate project and are not executed during the build of the example. They test the built archive in an application server through browser-testing. They use:</p>
+
+<ul>
+<li><strong>Arquillian Graphene Extension</strong> - an advanced Ajax-capable type-safe Selenium-based browser testing tool,</li>
+<li><strong>Arquillian Drone Extension</strong> - to automatically run and stop browser instances.</li>
+</ul>
+
+<p><em>Note: It is necessary to first build and package the example, because the functional test references the built archive for automatic deployment to the server.</em></p>
+
+<p>Run the functional test on JBoss AS instance with</p>
+
+<pre><code>mvn -f spring-ftest/pom.xml clean test
+</code></pre>
+
+<p>The <code>JBOSS_HOME</code> environment variable must be set and point to a JBoss AS instance directory.</p>
+
+<p>Several variables can be configured:</p>
+
+<ul>
+<li><p>path to an alternative archive for testing</p>
+
+<pre><code>-DtestDeployment=/path/to/archive.ear
+</code></pre></li>
+<li><p>the browser to use for testing</p>
+
+<pre><code>-Dbrowser=htmlUnit
+</code></pre></li>
+<li><p>test on a running server</p>
+
+<pre><code>-Dremote
+</code></pre></li>
+</ul>
+
+<h2>Testing in JBDS</h2>
+
+<h3>Functional tests</h3>
+
+<p>It is not possible to run the functional tests of this example in JBDS, because they use the maven-dependency-plugin to copy test classes from a different maven artifact, which is not a configuration supported by JBDS.</p>

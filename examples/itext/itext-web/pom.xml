@@ -92,6 +92,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>${version.war.plugin}</version>
                 <configuration>
                     <nonFilteredFileExtensions>
                         <!-- default value contains jpg,jpeg,gif,bmp,png -->

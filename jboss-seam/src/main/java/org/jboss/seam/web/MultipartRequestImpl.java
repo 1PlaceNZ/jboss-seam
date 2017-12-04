@@ -330,7 +330,15 @@ public class MultipartRequestImpl extends HttpServletRequestWrapper implements M
                   {
                      if (checkSequence(buffer, i, CR_LF))
                      {
-                        String param = (encoding == null) ? 
+                         // Check next CR_LF available in the buffer
+                         if ( read <= i + CR_LF.length)
+                         {  /* if there is no space left for CRLF in the buffer, 
+                            force pushing of remaining (unread) bytes to the beginning of the buffer,
+                            read more bytes and try again */
+                            i = read;
+                            break;
+                         }
+                         String param = (encoding == null) ? 
                                  new String(buffer, pos, i - pos - 1) :
                                  new String(buffer, pos, i - pos - 1, encoding);                        
                         parseParams(param, ";", headers);

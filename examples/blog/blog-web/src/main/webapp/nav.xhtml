@@ -1,8 +1,10 @@
-<span xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
       xmlns:s="http://jboss.org/schema/seam/taglib"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core">
+
+<span>
 
      <s:link id="allPosts" view="/search.xhtml" value="[All posts]" propagation="none">
          <f:param name="searchPattern" value=""/>
@@ -12,3 +14,4 @@
      <s:link id="atomFeed" view="/index.xml"   value="[Atom feed]"      propagation="none" />
      
 </span>
+</ui:composition>

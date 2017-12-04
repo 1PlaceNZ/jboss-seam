@@ -1,0 +1,39 @@
+<h1>Seam CDK Helper</h1>
+
+<p>Author: Rafael Benevides</p>
+
+<p>Maven Plugin to generate Validators and Converters for Seam 2.3 - Workaround for Richfaces 4 CDK</p>
+
+<h2>Why this Maven Plugin was created?</h2>
+
+<p>The converters and validators wasn&rsquo;t available as related at https://issues.jboss.org/browse/JBSEAM-4955</p>
+
+<p>There is a related issue with Richfaces 4 the prevents this generation https://issues.jboss.org/browse/RF-12271</p>
+
+<p>This plugin generates the conveters by looking for classes annotated with @FacesConvertes and the looks for its configs to generate its tag on s.taglib.xml</p>
+
+<p>For validators the source of the information is the correspondent xml files</p>
+
+<h2>How to use this plugin ?</h2>
+
+<p>Just at the plugin information on jboss-seam-ui pom.xml</p>
+
+<pre><code>&lt;build&gt;
+    &lt;plugins&gt;
+      ...
+      &lt;!-- This need to be after Richfaces CDK plugin --&gt;
+      &lt;plugin&gt;
+         &lt;groupId&gt;org.jboss.seam&lt;/groupId&gt;
+             &lt;artifactId&gt;seam-cdk-helper&lt;/artifactId&gt;
+             &lt;version&gt;1.0&lt;/version&gt;
+             &lt;executions&gt;
+            &lt;execution&gt;
+               &lt;phase&gt;generate-sources&lt;/phase&gt;
+               &lt;goals&gt;
+                  &lt;goal&gt;execute&lt;/goal&gt;
+               &lt;/goals&gt;
+            &lt;/execution&gt;
+         &lt;/executions&gt;
+      &lt;/plugin&gt;
+      ...
+</code></pre>

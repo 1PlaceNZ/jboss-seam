@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
 <project name="seamspace" basedir="." default="package"
          xmlns:artifact="antlib:org.apache.maven.artifact.ant"
-         xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors"
-         xmlns:jacoco="antlib:org.jacoco.ant">
-	
+         xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
+
 	<echo>${ant.version}</echo>
 	<!-- Check that we are using Ant 1.8.0 and higher. 
 	Not using <antversion> as it wasn't available until 1.7.0. 
@@ -11,6 +10,7 @@
 	<condition property="compatible.ant">
 		<or>
 	    	<contains string="${ant.version}" substring="1.8"/>
+	    	<contains string="${ant.version}" substring="1.9"/>
 		</or>
 	</condition>	
 	<fail unless="compatible.ant">You are using ${ant.version}. You must use Ant 1.8.0 or higher to build Seam examples.</fail>
@@ -23,7 +23,6 @@
    <property name="ear.module.dir" value="${basedir}/${project.name}-ear"/>
    <property name="ejb.module.dir" value="${basedir}/${project.name}-ejb"/>
    <property name="web.module.dir" value="${basedir}/${project.name}-web"/>
-   <property name="tests.module.dir" value="${basedir}/${project.name}-tests"/>
 
    <property name="target.dir" value="target"/>
    <property name="target.classes.dir" value="${target.dir}/classes"/>
@@ -38,7 +37,7 @@
    <property name="src.test.java.dir" value="src/test/java"/>
    <property name="src.main.webapp.dir" value="src/main/webapp"/>
    <property name="src.main.resources.dir" value="src/main/resources"/>
-   <property name="src.test.resources-integration.dir" value="src/test/resources-integration"/>
+   <property name="src.test.resources.dir" value="src/test/resources"/>
    <property name="src.main.application.dir" value="src/main/application"/>
 
    <property name="javac.debug" value="true"/>
@@ -59,21 +58,17 @@
             uri="antlib:org.apache.maven.artifact.ant"
             classpathref="build.lib.classpath"/>
 
-   <taskdef resource="org/jacoco/ant/antlib.xml"
-            uri="antlib:org.jacoco.ant"
-            classpathref="build.lib.classpath"/>
-
    <!-- POMs -->
    <artifact:pom id="ejb-pom" file="${ejb.module.dir}/pom.xml"/>
    <artifact:pom id="web-pom" file="${web.module.dir}/pom.xml"/>
    <artifact:pom id="ear-pom" file="${ear.module.dir}/pom.xml"/>
-   <artifact:pom id="tests-pom" file="${tests.module.dir}/pom.xml">
-      <profile id="arq-jbossas-7-managed"/>
+   <artifact:pom id="ejb-test-pom" file="${ejb.module.dir}/pom.xml">
+       <profile id="arq-jbossas-7-managed"/>
    </artifact:pom>
 
    <!-- Root targets -->
    <target name="clean" 
-           depends="clean-ejb,clean-web,clean-ear,clean-tests"/>
+           depends="clean-ejb,clean-web,clean-ear"/>
 
    <target name="compile" 
            depends="compile-ejb,compile-web"/>
@@ -96,11 +91,6 @@
 
    <target name="clean-ear">
       <delete dir="${ear.module.dir}/${target.dir}"/>
-   </target>
-
-   <target name="clean-tests">
-      <delete dir="${tests.module.dir}/${target.dir}"/>
-      <delete file="${tests.module.dir}/jacoco.exec"/>
    </target>
 
    <!-- Compile -->
@@ -188,7 +178,7 @@
       <artifact:dependencies pathId="ear.module.classpath" 
             filesetId="ear.module.fileset" pomRefId="ear-pom"/>
       <artifact:dependencies filesetId="ejb.module.fileset" useScope="runtime"
-            pomRefId="ejb-pom"/>
+            pomRefId="ejb-pom" versionsId="dependency.versions"/>
 
       <copy todir="${ear.module.dir}/${target.ear.dir}">
          <fileset refid="ear.module.fileset"/>
@@ -222,10 +212,7 @@
                <rsel:name name="**/jboss-seam*.jar"/>
             </rsel:not>
          </restrict>
-     	<chainedmapper>
-     	   <flattenmapper/>
-           <mapper type="glob" from="jboss-el*.jar" to="jboss-el.jar"/>
-        </chainedmapper>
+         <mapper classpathref="build.lib.classpath" classname="org.apache.maven.artifact.ant.VersionMapper" from="${dependency.versions}" to="flatten" />
       </copy>
 
       <ear destfile="${ear.module.dir}/${target.dir}/seam-${project.name}.ear"
@@ -260,85 +247,56 @@
    </target>
 
    <!-- Tests -->
-   <target name="compile-test" depends="install-ear">
-      <artifact:dependencies pathId="tests.module.classpath" 
-            pomRefId="tests-pom"/>
+   <target name="compile-test" depends="compile-ejb">
+      <artifact:dependencies pathId="test.dependencies" pomRefId="ejb-test-pom" />
       <path id="combined.project.classpath">
-         <path refid="tests.module.classpath"/>
+         <path refid="test.dependencies" />
          <pathelement location="${ejb.module.dir}/${target.classes.dir}"/>
       </path>
-      <mkdir dir="${tests.module.dir}/${target.test.classes.dir}"/>
+      <copy todir="${ejb.module.dir}/${target.test.classes.dir}" filtering="true">
+          <filterset begintoken="${" endtoken="}">
+             <filter token="jacoco.agent" value="" />
+             <filter token="jndiPattern" value="java:app/seam-${project.name}/#{ejbName}" />
+             <filter token="distributable" value="${distributable}" />
+          </filterset>
+          <fileset dir="${ejb.module.dir}/${src.test.resources.dir}" />
+          <fileset dir="${ejb.module.dir}/${src.main.resources.dir}" />
+      </copy>
+      <mkdir dir="${ejb.module.dir}/${target.test.classes.dir}"/>
       <javac source="1.6" target="1.6" debug="${javac.debug}"
              deprecation="${javac.deprecation}"
-             destdir="${tests.module.dir}/${target.test.classes.dir}"
+             destdir="${ejb.module.dir}/${target.test.classes.dir}"
              nowarn="on"
              includeantruntime="false">
          <compilerarg value="-Xlint"/>
-         <src path="${tests.module.dir}/${src.test.java.dir}"/>
+         <src path="${ejb.module.dir}/${src.test.java.dir}"/>
          <classpath refid="combined.project.classpath"/>
       </javac>
    </target>
 
-   <target name="process-test-resources" depends="compile-test">
-      <mkdir dir="${tests.module.dir}/${src.test.resources-integration.dir}"/>
-      <jacoco:agent property="jacoco.agent"/>
-      <copy todir="${tests.module.dir}/${target.test.classes.dir}">
-         <!--<fileset dir="${src.test.resources.dir}">-->
-            <!--<include name="**/*"/>-->
-         <!--</fileset>-->
-         <fileset dir="${tests.module.dir}/${src.test.resources-integration.dir}">
-            <include name="*"/>
-         </fileset>
-         <!--<fileset dir="${seamspace.web.dir}/src/main/resources">-->
-            <!--<include name="*"/>-->
-         <!--</fileset>-->
-         <filterset begintoken="${" endtoken="}">
-            <filter token="version.jbossas7" value="${version.jbossas7}"/>
-            <filter token="jacoco.agent" value="${jacoco.agent}"/>
-         </filterset>
-      </copy>
-   </target>
-
-   <target name="process-jbossas" depends="process-test-resources">
-      <artifact:dependencies pathId="jbossas.classpath" filesetId="jbossas.fileset" >
-         <dependency groupId="org.jboss.as" artifactId="jboss-as-dist" version="7.1.1.Final" type="zip"/>
-      </artifact:dependencies>
-      <copy todir="${tests.module.dir}/${target.dir}">
-         <fileset refid="jbossas.fileset" />
-         <mapper type="flatten"/>
-      </copy>
-      <unzip dest="${tests.module.dir}/${target.dir}">
-         <fileset dir="${tests.module.dir}/${target.dir}">
-            <include name="**/*.zip"/>
-            <exclude name="**/tmp*.zip"/>
-         </fileset>
-      </unzip>
-   </target>
-
-   <target name="test" depends="process-jbossas">
+   <target name="test" depends="compile-test">
       <path id="combined.test.project.classpath">
          <path refid="combined.project.classpath"/>
-         <pathelement location="${tests.module.dir}/${target.test.classes.dir}"/>
+         <pathelement location="${ejb.module.dir}/${target.test.classes.dir}"/>
       </path>
-      <mkdir dir="${tests.module.dir}/${target.test.classes.dir}"/>
-      <mkdir dir="${tests.module.dir}/${target.test.results.dir}"/>
-      <mkdir dir="${tests.module.dir}/${target.test.reports.dir}"/>
-      <junit printsummary="yes" haltonfailure="no" fork="yes" dir="${tests.module.dir}">
+      <mkdir dir="${ejb.module.dir}/${target.test.classes.dir}"/>
+      <mkdir dir="${ejb.module.dir}/${target.test.results.dir}"/>
+      <mkdir dir="${ejb.module.dir}/${target.test.reports.dir}"/>
+      <junit printsummary="yes" haltonfailure="no" fork="yes" dir="${ejb.module.dir}">
          <formatter type="xml"/>
          <classpath refid="combined.test.project.classpath"/>
-         <batchtest fork="true" todir="${tests.module.dir}/${target.test.results.dir}">
-            <fileset dir="${tests.module.dir}/${target.test.classes.dir}">
+         <batchtest fork="true" todir="${ejb.module.dir}/${target.test.results.dir}">
+            <fileset dir="${ejb.module.dir}/${target.test.classes.dir}">
                <exclude name="**/Deployments.class"/>
-               <exclude name="**/selenium/*"/>
                <include name="**/*Test.class"/>
             </fileset>
          </batchtest>
       </junit>
-      <junitreport todir="${tests.module.dir}/${target.test.reports.dir}">
-         <fileset dir="${tests.module.dir}/${target.test.results.dir}">
+      <junitreport todir="${ejb.module.dir}/${target.test.reports.dir}">
+         <fileset dir="${ejb.module.dir}/${target.test.results.dir}">
             <include name="TEST-*.xml" />
          </fileset>
-         <report todir="${tests.module.dir}/${target.test.reports.dir}" />
+         <report todir="${ejb.module.dir}/${target.test.reports.dir}" />
       </junitreport>
    </target>
 </project>

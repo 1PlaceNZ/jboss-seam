@@ -33,7 +33,7 @@ public class TestAuthenticator
       TestEjbLocal ejb = (TestEjbLocal) Component.getInstance("securedEjb", ScopeType.EVENT);
       ejb.foo();
       
-      log.debug("Authenticating username/password: " + credentials.getUsername() + "/" + credentials.getPassword());
+      log.debug("Authenticating username/password: {0}/{1}", credentials.getUsername(), credentials.getPassword());
       if (credentials.getUsername().equals(credentials.getPassword())) {
          log.info("Authenticated {0}", credentials.getUsername());
          

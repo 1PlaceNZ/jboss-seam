@@ -206,7 +206,7 @@ public class ResourceRequestEnvironment
 
       protected EnhancedMockHttpServletRequest createRequest()
       {
-         return new EnhancedMockHttpServletRequest();
+         return new EnhancedMockHttpServletRequest(environment.seamTest.servletContext);
       }
 
       protected EnhancedMockHttpServletResponse createResponse()

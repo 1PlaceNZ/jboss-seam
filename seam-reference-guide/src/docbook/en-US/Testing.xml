@@ -60,7 +60,7 @@ public class StatementOfAccount {
 }]]></programlisting>
 
         <para>
-            We could write a unit test for the calculateTotal method (which tests
+            We could write a unit test for the <literal>calculateTotal</literal> method (which tests
             the business logic of the component) as follows:
         </para>
 
@@ -79,7 +79,7 @@ public class StatementOfAccount {
             data to the database; nor are we testing any functionality 
             provided by Seam. We are just testing the logic of our POJOs. Seam
             components don't usually depend directly upon container infrastructure,
-            so most unit testing are as easy as that!
+            so most unit testing is as easy as that!
        </para>
        <para>    
             However, if you want to test the entire application, read on.
@@ -91,13 +91,13 @@ public class StatementOfAccount {
         <title>Integration testing Seam components</title>
 
         <warning>
-            <para>Using JBoss Embedded for integration testing was removed. Seam uses
-            Arquillian with JUnit. Right now TestNG is not recommended test framework with Arquillian.</para>
+            <para>JBoss Embedded is no longer used for integration testing. Seam uses
+            Arquillian with JUnit. Right now TestNG is not a recommended test framework with Arquillian.</para>
         </warning>
         
         <para>
             Integration testing is slightly more difficult. In this case, we can't eliminate
-            the container infrastructure; indeed, that is part of what is being tested! At
+            the container infrastructure; indeed, that is a part of what is being tested! At
             the same time, we don't want to be forced to deploy our application to an
             application server to run the automated tests. We need to be able to reproduce
             just enough of the container infrastructure inside our testing environment to be 
@@ -122,8 +122,7 @@ public class StatementOfAccount {
                     <area id="registration-test-deployment" coords="4"/>
                     <area id="registration-test-overprotocol" coords="5"/>
                     <area id="registration-test-zipimporter" coords="8"/>
-                    <area id="registration-test-addtestclass" coords="12"/>
-                    <area id="registration-test-lifecycle" coords="19"/>
+                    <area id="registration-test-lifecycle" coords="17"/>
                 </areaspec>
                 <programlisting role="JAVA"><![CDATA[@RunWith(Arquillian)
 public class RegisterTest
@@ -135,8 +134,6 @@ public class RegisterTest
       EnterpriseArchive er = ShrinkWrap.create(ZipImporter.class)
          .importFrom(new File("../registration-ear/target/seam-registration.ear"))
          .as(EnterpriseArchive.class);
-      WebArchive web = er.getAsType(WebArchive.class, "registration-web.war");
-      web.addClasses(RegisterTest.class);
       return er;
    }
 
@@ -184,12 +181,7 @@ public class RegisterTest
                     </para>
                 </callout>
                 <callout arearefs="registration-test-zipimporter">
-                    <para> ShrinkWrap can be used to create the deployment archive. In this example, the whole EAR is imported, but we could also use
-                        the ShrinkWrap API to create a WAR or an EAR from the scratch and put in just the artifacts that we need for the test.
-                    </para>
-                </callout>
-                <callout arearefs="registration-test-addtestclass">
-                    <para> The test class itself must be added to the web archive.
+                    <para> ShrinkWrap can be used to create the deployment archive. In this example, the whole EAR is imported, but we could also use the ShrinkWrap API to create a WAR or an EAR from scratch and put in just the artifacts that we need for the test.
                     </para>
                 </callout>
                 <callout arearefs="registration-test-lifecycle">
@@ -208,7 +200,7 @@ public class RegisterTest
           </para>
 
            <para>
-              Assuming you are using Maven as your build tool and want run your tests on JBoss AS 7, you will need to put these dependencies into your <literal>pom.xml</literal>:
+              Assuming you are using Maven as your build tool and want to run your tests on JBoss AS 7, you will need to put these dependencies into your <literal>pom.xml</literal>:
            </para>
           
            <programlisting role="XML"><![CDATA[<dependency>
@@ -237,12 +229,11 @@ public class RegisterTest
           
           <para>
             It is also possible to use the simulated JSF environment provided by <literal>SeamTest</literal> along with Arquillian. 
-            This is useful especially if you are migrating from previous Seam releases and want to keep your existing testsuite mostly
-            unchanged.
+            This is useful especially if you are migrating from previous Seam releases and want to keep your existing testsuite mostly unchanged.
           </para>
 
-          <note>SeamTest was primary designated for TestNG integration tests. There are some glitches
-          so we recommend to use JUnitSeamTest which is the JUnit variant for SeamTest.            
+          <note>SeamTest was primarily designated for TestNG integration tests. Currently, there are some glitches
+          so we recommend using JUnitSeamTest which is the JUnit variant of SeamTest.
           </note>
 
           <para>
@@ -251,7 +242,7 @@ public class RegisterTest
 
           <itemizedlist>
             <listitem>
-                <para>Create the <literal>@Deployment</literal> method.</para>
+                <para>Create the <literal>@Deployment</literal> method which constructs the test archive using ShrinkWrap. ShrinkWrap Resolver can be used to resolve any required dependencies.</para>
             </listitem>
             <listitem>
                 <para>Convert the test to JUnit. A <literal>JUnitSeamTest</literal>
@@ -272,17 +263,7 @@ public class RegisterTest extends JUnitSeamTest
    @OverProtocol("Servlet 3.0")
    public static Archive<?> createDeployment()
    {
-      EnterpriseArchive er = ShrinkWrap.create(ZipImporter.class)
-         .importFrom(new File("../registration-ear/target/seam-registration.ear"))
-         .as(EnterpriseArchive.class);
-      WebArchive web = er.getAsType(WebArchive.class, "registration-web.war");
-      web.addClasses(RegisterTest.class);
-
-      // Replacing the SeamListener with MockSeamListener
-      web.delete("/WEB-INF/web.xml");
-      web.addAsWebInfResource("WEB-INF/mock-web.xml", "web.xml");
-
-      return er;
+      return Deployments.registrationDeployment();
    }
 
    @Test
@@ -311,6 +292,48 @@ public class RegisterTest extends JUnitSeamTest
           </example>
 
           <example>
+            <title>Deployments.java</title>
+            <programlisting role="JAVA"><![CDATA[
+public class Deployments
+{
+   public static WebArchive registrationDeployment() 
+   {
+      File[] libs = Maven.resolver().loadPomFromFile("pom.xml")
+         .importCompileAndRuntimeDependencies()
+         // resolve jboss-seam, because it is provided-scoped in the pom, but we need it bundled in the WAR
+         .resolve("org.jboss.seam:jboss-seam")
+         .withTransitivity().asFile();
+      
+      return ShrinkWrap.create(WebArchive.class, "seam-registration.war")
+         // all main classes required for testing
+         .addPackage(RegisterAction.class.getPackage())
+         
+         // classpath resources
+         .addAsWebInfResource("META-INF/ejb-jar.xml", "ejb-jar.xml")
+         .addAsResource("persistence.xml", "META-INF/persistence.xml")
+         .addAsResource("seam.properties", "seam.properties")
+         
+         // resources manually copied from EAR and WAR modules
+         .addAsWebInfResource("components.xml", "components.xml")
+         .addAsWebInfResource("jboss-deployment-structure.xml", "jboss-deployment-structure.xml")
+         
+         // the modified web.xml
+         .addAsWebInfResource("mock-web.xml", "web.xml")
+         
+         // web resources
+         .addAsWebResource("index.html")
+         .addAsWebResource("register.xhtml")
+         .addAsWebResource("registered.xhtml")
+         
+         // libraries resolved using ShrinkWrap Resolver
+         .addAsLibraries(libs);
+   }
+}
+]]></programlisting>
+        
+          </example>
+          
+          <example>
             <title>mock-web.xml</title>
             <programlisting role="XML"><![CDATA[
 <?xml version="1.0" ?>
@@ -326,7 +349,7 @@ public class RegisterTest extends JUnitSeamTest
 </web-app>
 ]]></programlisting>
         
-          </example>        
+          </example>
         
         <section>
             <title>Using mocks in integration tests</title>
@@ -434,17 +457,8 @@ public class RegisterTest extends JUnitSeamTest
    @OverProtocol("Servlet 3.0") 
    public static Archive<?> createDeployment()
    {
-     EnterpriseArchive er = ShrinkWrap.create(ZipImporter.class, "seam-registration.ear").importFrom(new File("../registration-ear/target/seam-registration.ear"))
-               .as(EnterpriseArchive.class);
-     WebArchive web = er.getAsType(WebArchive.class, "registration-web.war");
-     web.addClasses(RegisterTest.class);
-
-     // Install org.jboss.seam.mock.MockSeamListener
-     web.delete("/WEB-INF/web.xml");
-     web.addAsWebInfResource("web.xml");
-     
-     return er;
-  }
+      return Deployments.registrationDeployment();
+   }
    
    @Test
    public void testLogin() throws Exception
@@ -534,22 +548,21 @@ public class RegisterTest extends JUnitSeamTest
            </para>
            
            <para>
-            For ant or own build tool which uses jars on local - you can use to get all jars
-            by running <literal>ant -f get-arquillian-libs.xml -Dtest.lib.dir=lib/test</literal>.  This just copy all Arquillian
-            jars for managed JBoss AS 7.1.1 container and copy all jars into defined directory <filename>lib/test</filename>
-             by using that <literal>test.lib.dir</literal> property.                      
+            If you use ant or a custom build tool which uses locally available jars - you can get all jars
+            by running <literal>ant -f get-arquillian-libs.xml -Dtest.lib.dir=lib/test</literal>.  This just downloads all Arquillian
+            jars for managed JBoss AS 7.1.1 container and copies those into a directory defined by the <literal>test.lib.dir</literal>
+            property, which is <filename>lib/test</filename> in this case.
            </para>             
            
            <para>
               And, of course you need to put your built project and tests onto
-              the classpath as well as jar for your test framework. Don't forget
+              the classpath, along with the jar of your test framework. Don't forget
               to put all the correct configuration files for JPA and Seam onto 
               the classpath as well. Seam asks Arquillian to deploy any 
-              resource (jar or directory) which has 
-              <literal>seam.properties</literal> in it's root. Therefore, if you
-              don't assemble a directory structure that resembles a deployable 
-              archive containing your built project, you must put a 
-              <literal>seam.properties</literal> in each resource.
+              resource (jar or directory) which has a <literal>seam.properties</literal>
+              file in it's root. Therefore, if you don't assemble a directory structure 
+              that resembles a deployable archive containing your built project, you must 
+              put a <literal>seam.properties</literal> in each resource.
            </para>
 
          </section>
@@ -642,7 +655,7 @@ public class RegisterTest extends JUnitSeamTest
 </dataset>]]></programlisting>
 
          <para>
-            In your test class, configure your dataset with overriding
+            In your test class, configure your dataset by overriding
             <literal>prepareDBUnitOperations()</literal>:
          </para>
       

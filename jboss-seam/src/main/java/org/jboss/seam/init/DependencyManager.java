@@ -137,7 +137,7 @@ public class DependencyManager
             {   
                 descriptor.getComponentClass().getClassLoader().loadClass(className);
             }
-            catch (NoClassDefFoundError e)
+            catch (LinkageError e)
             {
                return false;
             }

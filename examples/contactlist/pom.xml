@@ -1,48 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <artifactId>examples</artifactId>
-        <groupId>org.jboss.seam</groupId>
-        <version>2.3.1.Final</version>
-    </parent>
-    
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jboss.seam.examples</groupId>
-    <artifactId>contactlist</artifactId>
-    <packaging>pom</packaging>
-    <name>Contact List Example (EE6)</name>
-  
-    <modules>
-        <module>contactlist-ejb</module>
-        <module>contactlist-web</module>
-        <module>contactlist-ear</module>
-        <module>contactlist-tests</module>
-    </modules>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <properties>
-        <example.name>contactlist</example.name>
-    </properties>
-    
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jboss.seam.examples.contactlist</groupId>
-                <artifactId>contactlist-ejb</artifactId>
-                <version>${project.version}</version>
-                <type>ejb</type>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.seam.examples.contactlist</groupId>
-                <artifactId>contactlist-web</artifactId>
-                <version>${project.version}</version>
-                <type>war</type>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.seam.examples.contactlist</groupId>
-                <artifactId>contactlist-ear</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jboss.seam.examples</groupId>
+	<artifactId>contactlist</artifactId>
+	<version>2.3.2-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Contact List Example (EE6)</name>
+
+	<modules>
+		<module>contactlist-ejb</module>
+		<module>contactlist-web</module>
+		<module>contactlist-ear</module>
+	</modules>
+
+	<properties>
+		<example.name>contactlist</example.name>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.target>1.6</maven.compiler.target>
+		<maven.compiler.source>1.6</maven.compiler.source>
+
+		<!-- To use jacoco, set jacoco.agent system property to something like 
+			-javaagent:/path/to/jacocoagent.jar=append=true,destfile=/path/to/output/jacoco.exec -->
+		<jacoco.agent />
+
+		<!-- To use custom Maven settings and profiles, uncomment and customize 
+			the following properties. This is necessary for the ShrinkWrap resolver to 
+			function properly. -->
+		<!--<maven.user.settings>/path/to/custom/settings.xml</maven.user.settings> -->
+		<!--<maven.profiles>custom,profile</maven.profiles> -->
+
+		<version.commons.logging>1.1.1</version.commons.logging>
+        
+		<!-- Plugin versions -->
+		<version.dependency.plugin>2.5.1</version.dependency.plugin>
+		<version.surefire.plugin>2.10</version.surefire.plugin>
+		<version.compiler.plugin>2.3.1</version.compiler.plugin>
+		<version.ear.plugin>2.6</version.ear.plugin>
+		<version.war.plugin>2.1.1</version.war.plugin>
+		<version.jboss.maven.plugin>7.4.Final</version.jboss.maven.plugin>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jboss.seam.examples.contactlist</groupId>
+				<artifactId>contactlist-ejb</artifactId>
+				<version>${project.version}</version>
+				<type>ejb</type>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.seam.examples.contactlist</groupId>
+				<artifactId>contactlist-web</artifactId>
+				<version>${project.version}</version>
+				<type>war</type>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.seam.examples.contactlist</groupId>
+				<artifactId>contactlist-ear</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- BOMs -->
+			<dependency>
+				<groupId>org.jboss.seam</groupId>
+				<artifactId>bom</artifactId>
+				<version>${project.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>${version.commons.logging}</version>
+				<scope>provided</scope>
+			</dependency>
+			
+			 <dependency>
+             <groupId>org.jboss.seam</groupId>
+             <artifactId>jboss-seam</artifactId>
+             <version>${project.version}</version>
+             <exclusions>
+                 <exclusion>
+                     <groupId>org.testng</groupId>
+                     <artifactId>testng</artifactId>
+                 </exclusion>
+             </exclusions>
+         </dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!-- Manage plugin versions for build stability -->
+				<plugin>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${version.surefire.plugin}</version>
+					<configuration>
+						<systemPropertyVariables>
+							<org.apache.maven.user-settings>${maven.user.settings}</org.apache.maven.user-settings>
+							<maven.profiles>${maven.profiles}</maven.profiles>
+						</systemPropertyVariables>
+					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${version.dependency.plugin}</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${version.compiler.plugin}</version>
+					<configuration>
+						<source>${maven.compiler.source}</source>
+						<target>${maven.compiler.target}</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
 </project>

@@ -15,6 +15,7 @@
     <property name="src.model.dir" value="src/main" />
     <property name="src.action.dir" value="src/hot" />
     <property name="src.test.dir" value="src/test" />
+	<property name="src.resources-test.dir" value="resources-test" />
     <property name="lib.dir" value="lib" />
     <property name="endorsed.dir" value="${lib.dir}/endorsed" />
     <property name="war.dir" value="exploded-archives/${project.name}.war" />
@@ -62,6 +63,7 @@
         <mkdir dir="${classes.model.dir}" />
         <mkdir dir="${classes.action.dir}" />
         <mkdir dir="${dist.dir}" />
+    	<mkdir dir="${src.resources-test.dir}"/>
 
         <condition property="is.debug" value="true">
             <istrue value="${debug}"/>
@@ -413,6 +415,7 @@
     			<exclude name="WEB-INF/web.xml"/>            	
             </fileset>
             <fileset dir="${basedir}/view"/>
+        	<fileset dir="${basedir}/resources-test"/>
         </copy>
         <copy tofile="${test.dir}/META-INF/persistence.xml"
             file="${basedir}/resources/META-INF/persistence-test.xml"/>

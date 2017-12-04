@@ -114,6 +114,12 @@ public class ConversationPropagationsTest
    }
 
    @Test
+   public void testViewOutputAjax() throws Exception
+   {
+      testCommonScenario("Output: begin;xyzzy;viewOutput;. Conversation: true.", "view_output_ajax");
+   }
+
+   @Test
    public void testRedirectOutput() throws Exception
    {
       testCommonScenario("Output: begin;xyzzy;redirectOutput;. Conversation: true.", "redirect_output");
@@ -123,6 +129,12 @@ public class ConversationPropagationsTest
    public void testPagesRender() throws Exception
    {
       testCommonScenario("Output: begin;xyzzy;pagesRender;. Conversation: true.", "pages_render");
+   }
+
+   @Test
+   public void testPagesRenderAjax() throws Exception
+   {
+      testCommonScenario("Output: begin;xyzzy;pagesRender;. Conversation: true.", "pages_render_ajax");
    }
 
    @Test

@@ -88,8 +88,8 @@ public abstract class UISelectItems extends javax.faces.component.UISelectItems 
       
       protected abstract Object getSelectItemValue();
       protected abstract String getSelectItemLabel();
-      protected abstract Boolean getSelectItemDisabled();
-      protected abstract Boolean getSelectItemEscape();
+      protected abstract boolean getSelectItemDisabled();
+      protected abstract boolean getSelectItemEscape();
 
       protected javax.faces.model.SelectItem create()
       {
@@ -133,11 +133,11 @@ public abstract class UISelectItems extends javax.faces.component.UISelectItems 
    }
 
 
-   public abstract void setHideNoSelectionLabel(Boolean hideNoSelectionLabel);
+   public abstract void setHideNoSelectionLabel(boolean hideNoSelectionLabel);
 
    @Attribute(defaultValue = "false",
            description = @Description("if true, the noSelectionLabel will be hidden when a value is selected"))
-   public abstract Boolean isHideNoSelectionLabel();
+   public abstract boolean isHideNoSelectionLabel();
 
    @Attribute(description = @Description("specifies the (optional) label to place at the top of list " +
            "(if required=\"true\" is also specified then selecting this value will cause a validation error)"))
@@ -152,15 +152,15 @@ public abstract class UISelectItems extends javax.faces.component.UISelectItems 
       
    @Attribute(aliases = {@Alias("itemDisabled")},
            description = @Description("if true the SelectItem will be rendered disabled. Can reference the var variable"))
-   public abstract Boolean isDisabled();
+   public abstract boolean isDisabled();
    
-   public abstract void setDisabled(Boolean disabled);
+   public abstract void setDisabled(boolean disabled);
    
    @Attribute(defaultValue = "true", description = @Description("if false, characters in the label will not be escaped. " +
            "Beware that this is a safety issue when the label is in any way derived from input supplied by the application's user. . Can reference the var variable"))
-   public abstract Boolean isEscape();
+   public abstract boolean isEscape();
 
-   public abstract void setEscape(Boolean escape);
+   public abstract void setEscape(boolean escape);
 
    @Attribute(description = @Description("Value to return to the server if this option is selected. " +
            "Optional, by default the var object is used. Can reference the var variable"))
@@ -241,14 +241,14 @@ public abstract class UISelectItems extends javax.faces.component.UISelectItems 
          {
 
             @Override
-            protected Boolean getSelectItemDisabled()
+            protected boolean getSelectItemDisabled()
             {
                Boolean disabled = isDisabled();
                return disabled == null ? false : disabled;
             }
 
             @Override
-            protected Boolean getSelectItemEscape()
+            protected boolean getSelectItemEscape()
             {
                Boolean escape = isEscape();
                return escape == null ? true : escape;
@@ -291,7 +291,7 @@ public abstract class UISelectItems extends javax.faces.component.UISelectItems 
    {  
       ValueExpression vb = getValueExpression("noSelectionLabel");
       String noSelectionLabel = getNoSelectionLabel();
-      Boolean hideNoSelectionLabel = isHideNoSelectionLabel();
+      boolean hideNoSelectionLabel = isHideNoSelectionLabel();
       Object parentValue = getParentValue();
       
       /*

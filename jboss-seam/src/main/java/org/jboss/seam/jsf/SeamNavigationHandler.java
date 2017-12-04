@@ -7,6 +7,7 @@ import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.application.NavigationCase;
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.FacesContext;
+import javax.faces.context.PartialViewContext;
 
 import org.jboss.seam.core.Init;
 import org.jboss.seam.faces.FacesManager;
@@ -36,6 +37,8 @@ public class SeamNavigationHandler extends ConfigurableNavigationHandler
    {
       if ( !context.getResponseComplete() ) //workaround for a bug in MyFaces
       {
+    	  String oldView = (context.getViewRoot() != null ? context.getViewRoot().getViewId() : "");
+    	  
          if ( isOutcomeViewId(outcome) )
          {
             FacesManager.instance().interpolateAndRedirect(outcome);
@@ -47,6 +50,14 @@ public class SeamNavigationHandler extends ConfigurableNavigationHandler
          else if ( !Pages.instance().navigate(context, fromAction, outcome) )
          {
             baseNavigationHandler.handleNavigation(context, fromAction, outcome);
+         }
+         else {
+        	 if (!oldView.equals(context.getViewRoot().getViewId())) {
+     			PartialViewContext pctx = context.getPartialViewContext();
+     			if (!pctx.isRenderAll()) {
+     				pctx.setRenderAll(true);
+     			}
+     		}
          }
       }
    }

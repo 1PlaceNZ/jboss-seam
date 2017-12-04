@@ -2,16 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>booking</artifactId>
         <groupId>org.jboss.seam.examples</groupId>
-        <version>2.3.1.Final</version>
+        <artifactId>booking</artifactId>
+        <version>2.3.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     
     <groupId>org.jboss.seam.examples.booking</groupId>
     <artifactId>booking-ear</artifactId>
     <packaging>ear</packaging>
-    <name>Booking EAR Module</name>
+    <name>Booking EAR Module (EE6)</name>
     
     <dependencies>
         <dependency>
@@ -53,10 +53,20 @@
 
     <build>
         <finalName>seam-booking</finalName>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.jboss.as.plugins</groupId>
+                    <artifactId>jboss-as-maven-plugin</artifactId>
+                    <version>${version.jboss.maven.plugin}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ear-plugin</artifactId>
+                <version>${version.ear.plugin}</version>
                 <configuration>                    
                     <defaultLibBundleDir>lib</defaultLibBundleDir>
                     <filtering>true</filtering>
@@ -80,39 +90,6 @@
                     </modules>
                 </configuration>
             </plugin>
-			<plugin>
-				<groupId>org.jboss.as.plugins</groupId>
-				<artifactId>jboss-as-maven-plugin</artifactId>
-				<executions>
-					<!-- This requires to be enabled manually as <enabled>true</enabled> doesn't 
-						work -->
-					<!-- <execution> -->
-					<!-- <id>add-datasource</id> -->
-					<!-- <phase>package</phase> -->
-					<!-- <configuration> -->
-					<!-- <address>subsystem=datasources,data-source=java:/bookingDatasource</address> -->
-					<!-- <properties> -->
-					<!-- <connection-url>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1</connection-url> -->
-					<!-- <jndi-name>java:/bookingDatasource</jndi-name> -->
-					<!-- <enabled>true</enabled> -->
-					<!-- <pool-name>bookingDSPool</pool-name> -->
-					<!-- <user-name>sa</user-name> -->
-					<!-- <driver-name>h2</driver-name> -->
-					<!-- </properties> -->
-					<!-- </configuration> -->
-					<!-- <goals> -->
-					<!-- <goal>add-resource</goal> -->
-					<!-- </goals> -->
-					<!-- </execution> -->
-					<!-- Datasource has to be created before running deploy -->
-					<execution>
-						<phase />
-						<goals>
-							<goal>deploy</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
         </plugins>
     </build>
 
@@ -162,8 +139,42 @@
                             </execution>
                         </executions>
                     </plugin>
-                  </plugins>
-          </build>
+                </plugins>
+            </build>
         </profile>    
+        <profile>
+            <id>openshift</id>
+            <build>
+                <plugins>
+                    <plugin>
+                     <groupId>org.apache.maven.plugins</groupId>
+                     <artifactId>maven-ear-plugin</artifactId>
+                     <configuration>              
+                       <outputDirectory>deployments</outputDirectory>      
+                         <defaultLibBundleDir>lib</defaultLibBundleDir>
+                         <filtering>true</filtering>
+                         <modules>
+                             <webModule>
+                                 <groupId>org.jboss.seam.examples.booking</groupId>
+                                 <artifactId>booking-web</artifactId>
+                                 <contextRoot>/</contextRoot>
+                                 <bundleFileName>booking-web.war</bundleFileName>
+                             </webModule>
+                             <ejbModule>
+                                 <groupId>org.jboss.seam.examples.booking</groupId>
+                                 <artifactId>booking-ejb</artifactId>
+                                 <bundleFileName>booking-ejb.jar</bundleFileName>
+                             </ejbModule>
+                             <ejbModule>
+                                 <groupId>org.jboss.seam</groupId>
+                                 <artifactId>jboss-seam</artifactId>
+                                 <bundleFileName>jboss-seam.jar</bundleFileName>
+                             </ejbModule>                        
+                         </modules>
+                     </configuration>
+                 </plugin>
+                </plugins>
+          </build>
+        </profile> 
     </profiles>
 </project>

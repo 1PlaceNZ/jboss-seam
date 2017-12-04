@@ -1,0 +1,133 @@
+<h1>Seam SeamDiscs Example</h1>
+
+<p>The seamdiscs example is a simple example built using the Seam Application 
+Framework which allows you to record your favourite albums and artists.  It 
+uses a mix of RichFaces and Trinidad components. It also uses the "inplace 
+editing" pattern; the same facelets are used for editing and display of data 
+(login to edit a disc or artist).</p>
+
+<p>The Seam-Trinidad integration (for now built into the example) provides a 
+<code>DataModel</code> which, when backed by a Seam Application Framework Query, provides 
+lazy loading of data for paging, sorting in the Persistence Context and strong 
+row keys.  If you want to use, you'll need to copy the classes in 
+<code>org.jboss.seam.trinidad</code> to your own project.  This may be offered as a 
+standalone jar in the Seam project in the future.  One caveat is that you must 
+ensure the rows property on the <code>&lt;tr:table&gt;</code> is the same as the <code>maxResults</code>
+property on the Query.</p>
+
+<p>Example</p>
+
+<pre><code>&lt;tr:table value="#{discs.dataModel}" rows="#{discs.maxResults}"&gt;
+  &lt;tr:column&gt;
+     ...
+  &lt;/tr:column
+&lt;/tr:table&gt;
+</code></pre>
+
+<h2>Running the example</h2>
+
+<p>To deploy the example to a running JBoss AS instance, follow these steps:</p>
+
+<ol>
+<li><p>In the example root directory run:</p>
+
+<pre><code>mvn clean install
+</code></pre></li>
+<li><p>Set JBOSS_HOME environment property.</p></li>
+<li><p>In the seamdiscs-ear directory run:</p>
+
+<pre><code>mvn jboss-as:deploy
+</code></pre></li>
+<li><p>Open this URL in a web browser: http://localhost:8080/seam-seamdiscs</p></li>
+</ol>
+
+<h2>Testing the example</h2>
+
+<p>This example is covered by integration and functional tests. All tests use the following technologies:</p>
+
+<ul>
+<li><strong>Arquillian</strong> -  as the framework for EE testing, for managing of container lifecycle and deployment of test archive,</li>
+<li><strong>ShrinkWrap</strong> - to create the test archive (WAR).</li>
+</ul>
+
+<h3>Integration tests</h3>
+
+<p>Integration tests cover core application logic and reside in the EJB module. In addition to Arquillian and ShrinkWrap, the integration tests also use:</p>
+
+<ul>
+<li><strong>JUnitSeamTest</strong> - to hook into the JSF lifecycle and assert server-side state,</li>
+<li><strong>ShrinkWrap Resolver</strong> - to resolve dependencies of the project for packaging in the test archive.</li>
+</ul>
+
+<p>The tests are executed in Maven's test phase. By default they are skipped and can be executed on JBoss AS with:</p>
+
+<pre><code>mvn clean test -Darquillian=jbossas-managed-7
+</code></pre>
+
+<p>The <code>JBOSS_HOME</code> environment variable must be set and point to a JBoss AS instance directory.</p>
+
+<p>To test on a running server, use</p>
+
+<pre><code>mvn clean test -Darquillian=jbossas-remote-7
+</code></pre>
+
+<h3>Functional tests</h3>
+
+<p>Functional tests are located in a separate project and are not executed during the build of the example. They test the built archive in an application server through browser-testing. They use:</p>
+
+<ul>
+<li><strong>Arquillian Graphene Extension</strong> - an advanced Ajax-capable type-safe Selenium-based browser testing tool,</li>
+<li><strong>Arquillian Drone Extension</strong> - to automatically run and stop browser instances.</li>
+</ul>
+
+<p><em>Note: It is necessary to first build and package the example, because the functional test references the built archive for automatic deployment to the server.</em></p>
+
+<p>Run the functional test on JBoss AS instance with</p>
+
+<pre><code>mvn -f seamdiscs-ftest/pom.xml clean test
+</code></pre>
+
+<p>The <code>JBOSS_HOME</code> environment variable must be set and point to a JBoss AS instance directory.</p>
+
+<p>Several variables can be configured:</p>
+
+<ul>
+<li><p>path to an alternative archive for testing</p>
+
+<pre><code>-DtestDeployment=/path/to/archive.ear
+</code></pre></li>
+<li><p>the browser to use for testing</p>
+
+<pre><code>-Dbrowser=htmlUnit
+</code></pre></li>
+<li><p>test on a running server</p>
+
+<pre><code>-Dremote
+</code></pre></li>
+</ul>
+
+<h2>Testing in JBDS</h2>
+
+<h3>Integration tests</h3>
+
+<ol>
+<li>Open JBDS and start a configured instance of JBoss AS</li>
+<li>Import the example project and its submodules</li>
+<li>In the <em>Project Explorer</em>, select the EJB module project, then
+<ol>
+<li>Type <code>Ctrl+Alt+P</code> (<em>Select Maven Profiles</em>) and check <code>integration-tests</code> and <code>arq-jbossas-7-remote</code></li>
+<li>Right-click the module and select <em>Run As</em> - <em>JUnit Test</em></li>
+</ol></li>
+</ol>
+
+<h3>Functional tests</h3>
+
+<ol>
+<li>Open JBDS and start a configured instance of JBoss AS</li>
+<li>Import the <code>ftest</code> project of the example</li>
+<li>In the <em>Project Explorer</em>, select the ftest project, then
+<ol>
+<li>Type <code>Ctrl+Alt+P</code> (<em>Select Maven Profiles</em>) and activate <code>arq-jbossas-7-remote</code> profile and deactivate <code>arq-jbossas-7-managed</code> profile</li>
+<li>Right-click the module and select <em>Run As</em> - <em>JUnit Test</em></li>
+</ol></li>
+</ol>

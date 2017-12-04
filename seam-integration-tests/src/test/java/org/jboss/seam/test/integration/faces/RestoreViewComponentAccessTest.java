@@ -101,6 +101,7 @@ public class RestoreViewComponentAccessTest
       page = page.getElementById("form:append").click();
 
       assertFalse(page.getBody().getTextContent().contains("Sequence: 1, 2, 1"));
+      // this requires to have at least export LC_MESSAGES=en_US.utf8 or other similar english like locale 
       assertTrue(page.getBody().getTextContent().contains("value must be greater than or equal to 2"));
    }
 

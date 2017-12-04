@@ -18,6 +18,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${version.build-helper.plugin}</version>
                 <executions>
                     <execution>
                         <id>add-metawidget-source</id>
