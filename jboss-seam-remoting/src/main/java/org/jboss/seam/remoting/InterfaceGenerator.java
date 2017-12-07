@@ -87,9 +87,17 @@ public class InterfaceGenerator extends BaseRequestHandler implements RequestHan
               
               Component component = Component.forName(componentName);
               if (component == null)
-              {                 
-                 log.error(String.format("Component not found: [%s]", componentName));
-                 throw new ServletException("Invalid request - component not found.");
+              {
+               try
+                  {
+                            Class c = Reflections.classForName(componentName);
+                            appendClassSource(response.getOutputStream(), c, types);
+                  }
+                  catch (ClassNotFoundException ex)
+                  {
+                   log.error(String.format("Component not found: [%s]", componentName));
+                   throw new ServletException("Invalid request - component not found.");
+                   }
               }
               else
               {
