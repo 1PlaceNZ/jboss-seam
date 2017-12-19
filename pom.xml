@@ -69,7 +69,8 @@
 				<artifactId>bom</artifactId>
 				<version>${version.seam}</version>
 				<type>pom</type>
-				<scope>import</scope>
+				<scope>system</scope>
+				 <systemPath>C:\git\jboss-seam\bom\pom.xml</systemPath>
 			</dependency>
 
             <!-- thirdparty dependencies -->
